@@ -1,24 +1,46 @@
 const createBoard = function() {
-	const board = new Array(9)
-
-	const update = function(value, position) {
-		board.splice(position, 1, value);
+	const board = {
+		row1:new Array(3),
+		row2:new Array(3),
+		row3:new Array(3)
+	}
+	const update = function(value, row, position) {
+		board[row][position] = value;
 	}
 	const clear = function() {
-		board.forEach((item, index) => delete board[index])
+		board.row1 = new Array(3);
+		board.row2 = new Array(3);
+		board.row3 = new Array(3);
 	}
-	const hasLine = function() {
-		let row = board.some((space, index) => space === board[index-1] && space === board[index+1])
-		let column = board.some((space, index) => space === board[index-3] && space === board[index+3])
-		let diagdown = board.some((space, index) => space === board[index-4] && space === board[index+4])
-		let diagup = board.some((space, index) => space === board[index-2] && space === board[index+2] && index === 4)
-		if([row, column, diagdown, diagup].includes(true)) {return true};
-		return false;
+	const checkWin = function() {
+		const fullRow = function() {
+			for(row in board) {
+				if(!(row.every(position => position === 'o' || position === 'x'))) {return false};
+			}
+			return true;
+		}
+
+		const fullColumn = function() {
+			if (board.row1.some((item, index) => item === board.row2[index] && item === board.row3[index])) {return true};
+			return false;
+		}
+		const fullDiag = function() {
+			if (board.row1[1] === board.row2[2] && board.row1[1] === board.row3[3] ||
+			    board.row1[3] === board.row2[2] && board.row1[3] === board.row3[1]) {
+				return true;
+			}else {
+				return false;
+			}
+		}
+
 	}
 	const isFull = function() {
-		return (board.findIndex(position => position === undefined) === -1) ? true : false;
+		for (let row of Object.keys(board)) {
+			if (row.findIndex(position=> position === undefined) === -1) {return true};
+		}
+		return false;
 	}
-	return {update, clear, hasLine, isFull, board}
+	return {update, clear, checkWin, isFull, board}
 
 }
 
@@ -71,7 +93,7 @@ const runGame = function() {
 		let square = e.target;
 		display.update(player, position);
 
-		if(gameBoard.hasLine()) {
+		if(gameBoard.checkWin()) {
 			return win(player);
 		}
 
