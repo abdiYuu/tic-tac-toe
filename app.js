@@ -15,14 +15,14 @@ const createBoard = function() {
 		if([row, column, diag].includes(true)) {return true};
 		return false;
 	}
-	
 	const isFull = function() {
 		return (board.findIndex(position => position === undefined) === -1) ? true : false;
 	}
-
 	return {update, clear, hasLine, isFull, board}
 
 }
+
+
 
 const controlDisplay = function() {
 
@@ -32,32 +32,66 @@ const controlDisplay = function() {
 
 	return {update}
 
-
 }
 
 const runGame = function() {
+
+	let player;
+
 	const start = function(e){
-		const grid = document.querySelectorAll('.square')
+		player = Player(e.target.id).value;
+		const grid = document.querySelectorAll('.square');
 		grid.forEach(square => square.addEventListener('click', round));
+
 	}
+
+	const end = function() {
+		const grid = document.querySelectorAll('.square');
+		grid.forEach(square => square.removeEventListener('click', round));
+	}
+
 	const restart = {};
 
 	const round = function(e) {
-		let position = Number(e.target.id);
-		gameBoard.update('x', position)
-		e.target.removeEventListener('click', round);
+		let position = e.target;
+		let index = e.target.id
+
+		gameBoard.update(player, index)
+		position.removeEventListener('click', round);
 
 		let square = e.target;
-		display.update();
+		display.update(player, position);
+
+		if(gameBoard.hasLine()) {
+			return win(player);
+		}
+
+		if(gameBoard.isFull()) {
+			return tie();
+		}
+
+		if(player === 'x') {
+			player = 'o';
+		} else {
+			player = 'x';
+		}
 	}
 
-	const win = {}
-	const tie = {}
+	const win = function(player) {
+		end();
+		console.log(`Player ${player} wins!`);
+	}
+	const tie = function() {
+		end();
+		console.log(`It's a tie!`);
+	}
 
 	return {start, restart, round, win, tie};
 }
 
-
+const Player = function(value) {
+	return {value}
+}
 
 const gameBoard = createBoard();
 const game = runGame();
