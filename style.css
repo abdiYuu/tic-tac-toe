@@ -1,0 +1,31 @@
+*,
+*::before,
+*::after {
+	box-sizing:border-box;
+}
+
+body {
+	margin:0;
+}
+
+.head {
+	width:80%;
+	margin:auto;
+	display:flex;
+	padding-bottom:10rem;
+}
+
+.container {
+	display:grid;
+	grid-template-rows:1fr 1fr 1fr;
+	grid-template-columns:1fr 1fr 1fr;
+	width:80%;
+	max-width:500px;
+	margin:auto;
+	height:50vh;
+}
+
+.square {
+	width:1fr;
+	border:1px solid black;
+}
