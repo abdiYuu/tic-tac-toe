@@ -15,30 +15,37 @@ const createBoard = function() {
 	const checkWin = function() {
 		const fullRow = function() {
 			for(row in board) {
-				if(!(row.every(position => position === 'o' || position === 'x'))) {return false};
+				if(board[row][0] !== undefined &&
+				   board[row][0] === board[row][1] &&
+				   board[row][0] === board[row][2]) {
+					return true;
+				}
 			}
-			return true;
+			return false;
 		}
 
 		const fullColumn = function() {
-			if (board.row1.some((item, index) => item === board.row2[index] && item === board.row3[index])) {return true};
-			return false;
+			return board.row1.some((item, index) => item === board.row2[index] && item === board.row3[index])
 		}
 		const fullDiag = function() {
-			if (board.row1[1] === board.row2[2] && board.row1[1] === board.row3[3] ||
-			    board.row1[3] === board.row2[2] && board.row1[3] === board.row3[1]) {
+			if (board.row1[0] !== undefined &&
+			    board.row1[0] === board.row2[1] && board.row1[0] === board.row3[2] ||
+			    board.row1[2] !== undefined &&
+			    board.row1[2] === board.row2[1] && board.row1[2] === board.row3[0]) {
 				return true;
 			}else {
 				return false;
 			}
 		}
 
+		return [fullRow(), fullColumn(), fullDiag()].includes(true);
+
 	}
 	const isFull = function() {
-		for (let row of Object.keys(board)) {
-			if (row.findIndex(position=> position === undefined) === -1) {return true};
+		for (row in board) {
+			if (!(board[row].findIndex(position=> position === undefined) === -1)) {return false};
 		}
-		return false;
+		return true;
 	}
 	return {update, clear, checkWin, isFull, board}
 
@@ -48,8 +55,8 @@ const createBoard = function() {
 
 const controlDisplay = function() {
 
-	const update = function(value, position) {
-		position.innerText = value;
+	const update = function(value, square) {
+		square.innerText = value;
 	}
 
 	const clear = function() {
@@ -84,14 +91,14 @@ const runGame = function() {
 	}
 
 	const round = function(e) {
-		let position = e.target;
-		let index = e.target.id
-
-		gameBoard.update(player, index)
-		position.removeEventListener('click', round);
-
 		let square = e.target;
-		display.update(player, position);
+		let row = e.target.classList[1]
+		let position = e.target.id;
+		let value = player;
+
+		gameBoard.update(value, row, position);
+		display.update(value, square);
+		square.removeEventListener('click', round);
 
 		if(gameBoard.checkWin()) {
 			return win(player);
