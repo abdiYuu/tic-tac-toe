@@ -5,7 +5,7 @@ const createBoard = function() {
 		board.splice(position, 1, value);
 	}
 	const clear = function() {
-		board = new Array(9);
+		board.forEach((item, index) => delete board[index])
 	}
 	const hasLine = function() {
 		let row = board.some((space, index) => space === board[index-1] && space === board[index+1])
@@ -30,7 +30,12 @@ const controlDisplay = function() {
 		position.innerText = value;
 	}
 
-	return {update}
+	const clear = function() {
+		const grid = document.querySelectorAll('.square');
+		grid.forEach(square => square.innerText = '');
+	}
+
+	return {update, clear}
 
 }
 
@@ -43,6 +48,10 @@ const runGame = function() {
 		const grid = document.querySelectorAll('.square');
 		grid.forEach(square => square.addEventListener('click', round));
 
+		btns.forEach(btn => btn.removeEventListener('click', game.start));
+		btns.forEach(btn => btn.addEventListener('click', restart));
+
+
 	}
 
 	const end = function() {
@@ -50,7 +59,11 @@ const runGame = function() {
 		grid.forEach(square => square.removeEventListener('click', round));
 	}
 
-	const restart = {};
+	const restart = function(e){
+		gameBoard.clear();
+		display.clear();
+		start(e);
+	}
 
 	const round = function(e) {
 		let position = e.target;
