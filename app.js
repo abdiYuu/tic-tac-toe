@@ -26,10 +26,17 @@ const createBoard = function() {
 
 const controlDisplay = function() {
 
+	const update = function(value, position) {
+		position.innerText = value;
+	}
+
+	return {update}
+
+
 }
 
 const runGame = function() {
-	const start = function(){
+	const start = function(e){
 		const grid = document.querySelectorAll('.square')
 		grid.forEach(square => square.addEventListener('click', round));
 	}
@@ -39,6 +46,9 @@ const runGame = function() {
 		let position = Number(e.target.id);
 		gameBoard.update('x', position)
 		e.target.removeEventListener('click', round);
+
+		let square = e.target;
+		display.update();
 	}
 
 	const win = {}
@@ -50,6 +60,8 @@ const runGame = function() {
 
 
 const gameBoard = createBoard();
-const game = createGame();
+const game = runGame();
 const display = controlDisplay();
+const btns = document.querySelectorAll('.btn');
+btns.forEach(btn => btn.addEventListener('click', game.start));
 
