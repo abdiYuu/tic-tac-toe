@@ -53,6 +53,7 @@ const createBoard = function() {
 
 
 
+
 const controlDisplay = function() {
 
 	const update = function(value, square) {
@@ -67,6 +68,9 @@ const controlDisplay = function() {
 	return {update, clear}
 
 }
+
+
+
 
 const runGame = function() {
 
@@ -127,8 +131,8 @@ const runGame = function() {
 	return {start, restart, round, win, tie};
 }
 
-const Player = function(value) {
-	return {value}
+const Player = function(type, value) {
+	return {type, value}
 }
 
 const gameBoard = createBoard();
