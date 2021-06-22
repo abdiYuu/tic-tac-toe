@@ -10,9 +10,9 @@ const createBoard = function() {
 	const hasLine = function() {
 		let row = board.some((space, index) => space === board[index-1] && space === board[index+1])
 		let column = board.some((space, index) => space === board[index-3] && space === board[index+3])
-		let diag = board.some((space, index) => space === board[index-4] && space === board[index+4])
-		
-		if([row, column, diag].includes(true)) {return true};
+		let diagdown = board.some((space, index) => space === board[index-4] && space === board[index+4])
+		let diagup = board.some((space, index) => space === board[index-2] && space === board[index+2] && index === 4)
+		if([row, column, diagdown, diagup].includes(true)) {return true};
 		return false;
 	}
 	const isFull = function() {
@@ -49,9 +49,6 @@ const runGame = function() {
 		grid.forEach(square => square.addEventListener('click', round));
 
 		btns.forEach(btn => btn.removeEventListener('click', game.start));
-		btns.forEach(btn => btn.addEventListener('click', restart));
-
-
 	}
 
 	const end = function() {
@@ -59,10 +56,9 @@ const runGame = function() {
 		grid.forEach(square => square.removeEventListener('click', round));
 	}
 
-	const restart = function(e){
+	const restart = function(){
 		gameBoard.clear();
 		display.clear();
-		start(e);
 	}
 
 	const round = function(e) {
@@ -109,6 +105,8 @@ const Player = function(value) {
 const gameBoard = createBoard();
 const game = runGame();
 const display = controlDisplay();
+
+
 const btns = document.querySelectorAll('.btn');
 btns.forEach(btn => btn.addEventListener('click', game.start));
 
