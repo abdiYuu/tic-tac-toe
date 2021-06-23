@@ -47,7 +47,16 @@ const createBoard = function() {
 		}
 		return true;
 	}
-	return {update, clear, checkWin, isFull, board}
+
+	const takenPosition = function(row, position) {
+		if (board[row][position] === undefined) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	return {update, clear, checkWin, isFull, takenPosition, board}
 
 }
 
@@ -64,6 +73,14 @@ const controlDisplay = function() {
 		const grid = document.querySelectorAll('.square');
 		grid.forEach(square => square.innerText = '');
 	}
+	
+	const currentPlayer  = function() {
+	}
+
+	const winMsg = function() {
+	}
+	const tieMsg = function() {
+	}
 
 	return {update, clear}
 
@@ -76,8 +93,26 @@ const runGame = function() {
 
 	let player;
 
+// starting point for p-v-cpu functionality
+
+/*	const cpuPlay = function(value) {
+		let row = 'row' + (Math.floor(Math.random() * 3) + 1);
+		let position = Math.floor(Math.random() * 3);
+
+		while (gameBoard.takenPosition(row, position)) {
+			let row = 'row' + (Math.floor(Math.random() * 3) + 1);
+			let position = Math.floor(Math.random() * 3);
+		}
+		gameBoard.update(value, row, position);
+
+		let square = document.querySelector(`.${row}, #\\${position}`)
+		display.update(value, square)
+		square.removeEventListener('click', round)
+	}
+*/
+
 	const start = function(e){
-		player = Player(e.target.id).value;
+		player = Player('human', e.target.id).value;
 		const grid = document.querySelectorAll('.square');
 		grid.forEach(square => square.addEventListener('click', round));
 
