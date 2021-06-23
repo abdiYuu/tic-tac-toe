@@ -56,7 +56,7 @@ const createBoard = function() {
 		}
 	}
 
-	return {update, clear, checkWin, isFull, takenPosition, board}
+	return {update, clear, checkWin, isFull, board}
 
 }
 
