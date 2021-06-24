@@ -78,7 +78,10 @@ const controlDisplay = function() {
 		restart.style.display='none';
 	}
 	
-	const currentPlayer  = function() {
+	const showPlayers  = function(players) {
+		const player_display = document.querySelector('.players');
+		
+
 	}
 
 	const result = function(winner) {
@@ -91,7 +94,7 @@ const controlDisplay = function() {
 		if(!winner) {
 			msg.innerText = `It's a tie!`;
 		} else {
-			msg.innerText = `${winner.toUpperCase()} wins!`
+			msg.innerText = `Player ${winner} wins!`
 		}
 		restart.style.display='block';
 		restart.addEventListener('click', game.restart);
@@ -106,7 +109,9 @@ const controlDisplay = function() {
 
 const runGame = function() {
 
-	let player;
+	let p1;
+	let p2;
+	let currentPlayer;
 
 // starting point for p-v-cpu functionality
 
@@ -135,11 +140,18 @@ const runGame = function() {
 
 
 	const start = function(e){
-		player = Player('human', e.target.id).value;
+		p1 = Player(1, e.target.id);
+		if(p1.value === 'x') {
+			p2 = Player(2, 'o');
+		}else {
+			p2 = Player(2, 'x');
+		}
 		const grid = document.querySelectorAll('.square');
 		grid.forEach(square => square.addEventListener('click', round));
 
 		initialize(restart, start);
+		currentPlayer = p1;
+		console.table(p1);
 	}
 
 	const end = function() {
@@ -157,24 +169,24 @@ const runGame = function() {
 		let square = e.target;
 		let row = e.target.classList[1]
 		let position = e.target.id;
-		let value = player;
+		let value = currentPlayer.value;
 
 		gameBoard.update(value, row, position);
 		display.update(value, square);
 		square.removeEventListener('click', round);
 
 		if(gameBoard.checkWin()) {
-			return win(player);
+			return win(currentPlayer.num);
 		}
 
 		if(gameBoard.isFull()) {
 			return tie();
 		}
 
-		if(player === 'x') {
-			player = 'o';
+		if(currentPlayer === p1) {
+			currentPlayer = p2;
 		} else {
-			player = 'x';
+			currentPlayer = p1;
 		}
 	}
 
@@ -190,8 +202,8 @@ const runGame = function() {
 	return {initialize, start, restart, round, win, tie};
 }
 
-const Player = function(type, value) {
-	return {type, value}
+const Player = function(num, value) {
+	return {num, value}
 }
 
 const gameBoard = createBoard();
