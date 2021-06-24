@@ -72,17 +72,32 @@ const controlDisplay = function() {
 	const clear = function() {
 		const grid = document.querySelectorAll('.square');
 		grid.forEach(square => square.innerText = '');
+		const overlay = document.querySelector('.overlay');
+		overlay.style.display = 'none';
+		const restart = document.querySelector('.restart');
+		restart.style.display='none';
 	}
 	
 	const currentPlayer  = function() {
 	}
 
-	const winMsg = function() {
-	}
-	const tieMsg = function() {
+	const result = function(winner) {
+		const overlay = document.querySelector('.overlay');
+		const msg = document.querySelector('.msg')
+		const restart = document.querySelector('.restart')
+
+		overlay.style.display='flex';
+
+		if(!winner) {
+			msg.innerText = `It's a tie!`;
+		} else {
+			msg.innerText = `${winner.toUpperCase()} wins!`
+		}
+		restart.style.display='block';
+		restart.addEventListener('click', game.restart);
 	}
 
-	return {update, clear}
+	return {update, clear, result}
 
 }
 
@@ -110,13 +125,21 @@ const runGame = function() {
 		square.removeEventListener('click', round)
 	}
 */
+	const initialize = function(new_state, old_state=null){
+		const options  = document.querySelectorAll('.option');
+		if (old_state !== null) {
+			options.forEach(option => option.removeEventListener('click', old_state));
+		}
+		options.forEach(option => option.addEventListener('click', new_state));
+	}
+
 
 	const start = function(e){
 		player = Player('human', e.target.id).value;
 		const grid = document.querySelectorAll('.square');
 		grid.forEach(square => square.addEventListener('click', round));
 
-		btns.forEach(btn => btn.removeEventListener('click', game.start));
+		initialize(restart, start);
 	}
 
 	const end = function() {
@@ -127,6 +150,7 @@ const runGame = function() {
 	const restart = function(){
 		gameBoard.clear();
 		display.clear();
+		initialize(start, restart);
 	}
 
 	const round = function(e) {
@@ -156,14 +180,14 @@ const runGame = function() {
 
 	const win = function(player) {
 		end();
-		console.log(`Player ${player} wins!`);
+		display.result(player);
 	}
 	const tie = function() {
 		end();
-		console.log(`It's a tie!`);
+		display.result();
 	}
 
-	return {start, restart, round, win, tie};
+	return {initialize, start, restart, round, win, tie};
 }
 
 const Player = function(type, value) {
@@ -174,7 +198,4 @@ const gameBoard = createBoard();
 const game = runGame();
 const display = controlDisplay();
 
-
-const btns = document.querySelectorAll('.btn');
-btns.forEach(btn => btn.addEventListener('click', game.start));
-
+game.initialize(game.start);
