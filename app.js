@@ -56,7 +56,7 @@ const createBoard = function() {
 		}
 	}
 
-	return {update, clear, checkWin, isFull, board}
+	return {update, clear, checkWin, isFull}
 
 }
 
@@ -75,6 +75,7 @@ const controlDisplay = function() {
 	}
 	
 	let {grid, overlay, restartBtn, player_display, resultMsg} = selectors();
+
 	const update = function(value, square) {
 		square.innerText = value;
 	}
