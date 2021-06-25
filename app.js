@@ -65,42 +65,47 @@ const createBoard = function() {
 
 const controlDisplay = function() {
 
+	const selectors = function() {
+		const grid = document.querySelectorAll('.square');
+		const overlay = document.querySelector('.overlay');
+		const restartBtn = document.querySelector('.restart')
+		const player_display = document.querySelector('.players');
+		const resultMsg = document.querySelector('.msg');
+		return {grid, overlay, restartBtn, player_display, resultMsg};
+	}
+	
+	let {grid, overlay, restartBtn, player_display, resultMsg} = selectors();
 	const update = function(value, square) {
 		square.innerText = value;
 	}
-
-	const clear = function() {
-		const grid = document.querySelectorAll('.square');
+	const clearGrid = function() {
+		grid.forEach(square => square.innerText ='');
+	}
+	const clearAll = function() {
 		grid.forEach(square => square.innerText = '');
-		const overlay = document.querySelector('.overlay');
 		overlay.style.display = 'none';
-		const restart = document.querySelector('.restart');
-		restart.style.display='none';
+		restartBtn.style.display='none';
+		player_display.innerText='Choose your weapon!';
 	}
 	
-	const showPlayers  = function(players) {
-		const player_display = document.querySelector('.players');
+	const showPlayers  = function(p1, p2) {
+		player_display.innerText = `P1: ${p1.value.toUpperCase()} vs P2: ${p2.value.toUpperCase()}`
 		
-
 	}
 
 	const result = function(winner) {
-		const overlay = document.querySelector('.overlay');
-		const msg = document.querySelector('.msg')
-		const restart = document.querySelector('.restart')
-
 		overlay.style.display='flex';
 
 		if(!winner) {
-			msg.innerText = `It's a tie!`;
+			resultMsg.innerText = `It's a tie!`;
 		} else {
-			msg.innerText = `Player ${winner} wins!`
+			resultMsg.innerText = `Player ${winner} wins!`
 		}
-		restart.style.display='block';
-		restart.addEventListener('click', game.restart);
+		restartBtn.style.display='block';
+		restartBtn.addEventListener('click', game.restart);
 	}
 
-	return {update, clear, result}
+	return {update, clearGrid, clearAll, result, showPlayers}
 
 }
 
@@ -130,16 +135,9 @@ const runGame = function() {
 		square.removeEventListener('click', round)
 	}
 */
-	const initialize = function(new_state, old_state=null){
-		const options  = document.querySelectorAll('.option');
-		if (old_state !== null) {
-			options.forEach(option => option.removeEventListener('click', old_state));
-		}
-		options.forEach(option => option.addEventListener('click', new_state));
-	}
-
-
-	const start = function(e){
+	const start = function(e) {
+		gameBoard.clear();
+		display.clearGrid();
 		p1 = Player(1, e.target.id);
 		if(p1.value === 'x') {
 			p2 = Player(2, 'o');
@@ -149,9 +147,8 @@ const runGame = function() {
 		const grid = document.querySelectorAll('.square');
 		grid.forEach(square => square.addEventListener('click', round));
 
-		initialize(restart, start);
 		currentPlayer = p1;
-		console.table(p1);
+		display.showPlayers(p1, p2);
 	}
 
 	const end = function() {
@@ -161,8 +158,7 @@ const runGame = function() {
 
 	const restart = function(){
 		gameBoard.clear();
-		display.clear();
-		initialize(start, restart);
+		display.clearAll();
 	}
 
 	const round = function(e) {
@@ -199,7 +195,7 @@ const runGame = function() {
 		display.result();
 	}
 
-	return {initialize, start, restart, round, win, tie};
+	return {start, restart, round, win, tie};
 }
 
 const Player = function(num, value) {
@@ -210,4 +206,5 @@ const gameBoard = createBoard();
 const game = runGame();
 const display = controlDisplay();
 
-game.initialize(game.start);
+const options = document.querySelectorAll('.option');
+options.forEach(option => option.addEventListener('click', game.start));
